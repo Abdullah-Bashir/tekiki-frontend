@@ -1,86 +1,77 @@
 "use client";
 
-import Navbar from "@/app/components/Navbar";
-import ServiceCard from "./components/ServiceCard"; // Adjust this path if needed
-import { motion } from "framer-motion";
-import { FaStar } from "react-icons/fa";
-import Footer from "./components/Footer";
-
-const reviewVariants = {
-  hidden: { opacity: 0, y: 20 },
-  visible: (i) => ({
-    opacity: 1,
-    y: 0,
-    transition: {
-      delay: i * 0.15,
-      duration: 0.5,
-      ease: "easeOut",
-    },
-  }),
-};
+import { Navbar } from "@/app/components/Navbar";
+import ServiceCard from "./components/ServiceCard"; // adjust path if needed
+import ReviewCard from "./components/ReviewCard";   // import ReviewCard
+import { Footer } from "./components/Footer";
 
 export default function Home() {
+  const reviews = [
+    {
+      text: "“This is a great service! Really helped me a lot.”",
+      user: "- User 1",
+    },
+    {
+      text: "“Amazing experience, would recommend to everyone.”",
+      user: "- User 2",
+    },
+    {
+      text: "“Professional and reliable service.”",
+      user: "- User 3",
+    },
+    {
+      text: "“Exceeded my expectations in every way.”",
+      user: "- User 4",
+    },
+  ];
+
   return (
     <>
       <Navbar />
 
-
       {/* Video placeholder */}
-      <section className="w-full h-[60vh] bg-gray-200 flex items-center justify-center">
+      <section className="w-full h-[70vh] bg-gray-200 flex items-center justify-center">
         <p className="text-gray-500 text-xl">Video will be set here by admin</p>
       </section>
 
-
       {/* Services Section */}
-      <section className="py-12 px-4 max-w-6xl mx-auto">
-        {/* Title */}
-        <h2 className="text-3xl font-bold text-center mb-10">Services</h2>
-        {/* Cards grid */}
+      <section className="py-12 px-8 md:px-4 max-w-6xl mx-auto">
+        <h2 className="text-4xl font-bold text-center mb-10">Services</h2>
+
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-8 max-w-[960px] mx-auto">
           {[...Array(6)].map((_, idx) => (
             <ServiceCard key={idx} serviceNumber={idx + 1} />
           ))}
         </div>
+
+        <div className="flex justify-center mt-8">
+          <button
+            className="bg-[#079DB6] text-white font-semibold px-4 sm:px-12 py-1 sm:py-2 rounded-full shadow-md text-sm sm:text-base
+            hover:bg-[#057a8a] active:scale-95 transition duration-200 ease-in-out cursor-pointer"
+          >
+            Show More
+          </button>
+        </div>
       </section>
 
-
       {/* Reviews Section */}
-      <section className="py-12 px-4 max-w-6xl mx-auto text-cente rounded-lg shadow-sm">
-        <h2 className="text-3xl font-bold mb-10">Reviews from Trspivsor</h2>
+      <section className="py-12 px-4 max-w-6xl mx-auto text-center rounded-lg">
+        <h2 className="text-4xl font-bold text-center mb-10">Reviews from Trspivsor</h2>
 
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
-          {[...Array(4)].map((_, idx) => (
-            <motion.blockquote
+          {reviews.map((review, idx) => (
+            <ReviewCard
               key={idx}
-              className="bg-white p-6 rounded-md shadow-md italic text-gray-700 flex flex-col justify-between cursor-pointer"
-              style={{ minHeight: "180px" }}
-              custom={idx}
-              initial="hidden"
-              animate="visible"
-              variants={reviewVariants}
-              whileHover={{ scale: 1.05, boxShadow: "0 8px 20px rgba(128,128,128,0.3)" }}
-              transition={{ type: "tween", duration: 0.3 }}
-            >
-              <div>
-                {/* Star Rating */}
-                <div className="flex mb-2 text-yellow-400 justify-center">
-                  {[...Array(5)].map((_, starIdx) => (
-                    <FaStar key={starIdx} />
-                  ))}
-                </div>
-
-                <p>“This is a great service! Really helped me a lot.”</p>
-              </div>
-
-              <footer className="mt-4 text-right font-semibold">- User {idx + 1}</footer>
-            </motion.blockquote>
-
+              index={idx}
+              text={review.text}
+              user={review.user}
+              imgSrc={review.imgSrc}
+            />
           ))}
         </div>
       </section>
 
       <Footer />
-
     </>
   );
 }
