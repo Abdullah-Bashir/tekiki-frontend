@@ -1,6 +1,7 @@
 "use client";
 
 import { useState } from "react";
+import Image from "next/image";
 import { Navbar } from "@/app/components/Navbar";
 import { Footer } from "../components/Footer";
 import { FaPhone, FaEnvelope, FaMapMarkerAlt, FaFacebookF, FaInstagram } from "react-icons/fa";
@@ -36,8 +37,10 @@ export default function Contacts() {
 
                     {/* Left side - Contact form (wider) */}
                     <div className="flex-[1.5] pr-0 md:pr-8 border-r-0 md:border-r border-gray-300 flex flex-col">
-                        <h2 className="text-4xl font-bold text-black mb-2">We'd like to contact you</h2>
-                        <p className="text-gray-600 mb-6">Fill out the form below and we'll get back to you as soon as possible.</p>
+                        <h2 className="text-4xl font-bold text-black mb-2">We&apos;d like to contact you</h2>
+                        <p className="text-gray-600 mb-6">
+                            Fill out the form below and we&apos;ll get back to you as soon as possible.
+                        </p>
 
                         <form className="space-y-4 flex-grow">
                             <div className="flex items-center gap-4">
@@ -48,7 +51,7 @@ export default function Contacts() {
                                     name="name"
                                     value={formData.name}
                                     onChange={handleChange}
-                                    className="flex-1 px-4 py-2 border border-gray-300 rounded bg-gray-200 focus:outline-none focus:ring-2 focus:ring-[#079DB6]"
+                                    className="flex-1 px-4 py-2 border border-gray-300 rounded bg-white focus:outline-none focus:ring-2 focus:ring-[#079DB6]"
                                     placeholder="Your name"
                                 />
                             </div>
@@ -61,7 +64,7 @@ export default function Contacts() {
                                     name="email"
                                     value={formData.email}
                                     onChange={handleChange}
-                                    className="flex-1 px-4 py-2 border border-gray-300 rounded bg-gray-200 focus:outline-none focus:ring-2 focus:ring-[#079DB6]"
+                                    className="flex-1 px-4 py-2 border border-gray-300 rounded bg-white focus:outline-none focus:ring-2 focus:ring-[#079DB6]"
                                     placeholder="Your email"
                                 />
                             </div>
@@ -74,7 +77,7 @@ export default function Contacts() {
                                     name="phone"
                                     value={formData.phone}
                                     onChange={handleChange}
-                                    className="flex-1 px-4 py-2 border border-gray-300 rounded bg-gray-200  focus:outline-none focus:ring-2 focus:ring-[#079DB6]"
+                                    className="flex-1 px-4 py-2 border border-gray-300 rounded bg-white focus:outline-none focus:ring-2 focus:ring-[#079DB6]"
                                     placeholder="Your phone number"
                                 />
                             </div>
@@ -87,7 +90,7 @@ export default function Contacts() {
                                     name="message"
                                     value={formData.message}
                                     onChange={handleChange}
-                                    className="flex-1 px-4 py-2 border border-gray-300 rounded bg-gray-200  focus:outline-none focus:ring-2 focus:ring-[#079DB6]"
+                                    className="flex-1 px-4 py-2 border border-gray-300 rounded bg-white focus:outline-none focus:ring-2 focus:ring-[#079DB6]"
                                     placeholder="Your message"
                                 />
                             </div>
@@ -95,14 +98,13 @@ export default function Contacts() {
                             <div className="flex justify-end">
                                 <button
                                     type="submit"
-                                    className="bg-[#079DB6] text-white font-semibold px-6 py-2  hover:bg-[#057a8a] transition duration-200 rounded-full "
+                                    className="bg-[#079DB6] text-white font-semibold px-6 py-2 hover:bg-[#057a8a] transition duration-200 rounded-full"
                                 >
                                     Send Message
                                 </button>
                             </div>
                         </form>
                     </div>
-
 
                     {/* Right side - Contact info (narrower) */}
                     <div className="flex-1 pl-0 md:pl-8">
@@ -137,10 +139,10 @@ export default function Contacts() {
                             <h3 className="font-semibold text-gray-800 mb-4">Follow Us</h3>
                             <div className="flex space-x-4">
                                 <a href="https://facebook.com" target="_blank" rel="noopener noreferrer" className="text-[#079DB6] hover:text-[#057a8a]">
-                                    <img src="/facebook.png" alt="face" />
+                                    <Image src="/facebook.png" alt="Facebook" width={24} height={24} />
                                 </a>
                                 <a href="https://instagram.com" target="_blank" rel="noopener noreferrer" className="text-[#079DB6] hover:text-[#057a8a]">
-                                    <img src="/instagram.png" alt="face" />
+                                    <Image src="/instagram.png" alt="Instagram" width={24} height={24} />
                                 </a>
                             </div>
                         </div>
