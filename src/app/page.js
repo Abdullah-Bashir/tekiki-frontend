@@ -4,6 +4,7 @@ import { Navbar } from "@/app/components/Navbar";
 import ServiceCard from "./components/ServiceCard"; // adjust path if needed
 import ReviewCard from "./components/ReviewCard";   // import ReviewCard
 import { Footer } from "./components/Footer";
+import Link from "next/link";
 
 export default function Home() {
   const reviews = [
@@ -45,13 +46,16 @@ export default function Home() {
         </div>
 
         <div className="flex justify-center mt-8">
-          <button
-            className="bg-[#079DB6] text-white font-semibold px-4 sm:px-12 py-1 sm:py-2 rounded-full shadow-md text-sm sm:text-base
-            hover:bg-[#057a8a] active:scale-95 transition duration-200 ease-in-out cursor-pointer"
-          >
-            Show More
-          </button>
+          <Link href="/services" passHref>
+            <button
+              className="bg-[#079DB6] text-white font-semibold px-4 sm:px-12 py-1 sm:py-2 rounded-full shadow-md text-sm sm:text-base
+      hover:bg-[#057a8a] active:scale-95 transition duration-200 ease-in-out cursor-pointer"
+            >
+              Show More
+            </button>
+          </Link>
         </div>
+
       </section>
 
       {/* Reviews Section */}

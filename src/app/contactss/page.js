@@ -4,7 +4,7 @@ import { useState } from "react";
 import Image from "next/image";
 import { Navbar } from "@/app/components/Navbar";
 import { Footer } from "../components/Footer";
-import { FaPhone, FaEnvelope, FaMapMarkerAlt, FaFacebookF, FaInstagram } from "react-icons/fa";
+import { FaPhone, FaEnvelope, FaMapMarkerAlt } from "react-icons/fa";
 
 export default function Contacts() {
     const [formData, setFormData] = useState({
@@ -35,65 +35,39 @@ export default function Contacts() {
             <section className="max-w-6xl mx-auto px-4 sm:px-6 py-12">
                 <div className="flex flex-col md:flex-row gap-8">
 
-                    {/* Left side - Contact form (wider) */}
+                    {/* Left side - Contact form (wider on md+) */}
                     <div className="flex-[1.5] pr-0 md:pr-8 border-r-0 md:border-r border-gray-300 flex flex-col">
                         <h2 className="text-4xl font-bold text-black mb-2">We&apos;d like to contact you</h2>
                         <p className="text-gray-600 mb-6">
                             Fill out the form below and we&apos;ll get back to you as soon as possible.
                         </p>
 
-                        <form className="space-y-4 flex-grow">
-                            <div className="flex items-center gap-4">
-                                <label htmlFor="name" className="w-24 text-gray-700">Name</label>
-                                <input
-                                    type="text"
-                                    id="name"
-                                    name="name"
-                                    value={formData.name}
-                                    onChange={handleChange}
-                                    className="flex-1 px-4 py-2 border border-gray-300 rounded bg-white focus:outline-none focus:ring-2 focus:ring-[#079DB6]"
-                                    placeholder="Your name"
-                                />
-                            </div>
-
-                            <div className="flex items-center gap-4">
-                                <label htmlFor="email" className="w-24 text-gray-700">Email</label>
-                                <input
-                                    type="email"
-                                    id="email"
-                                    name="email"
-                                    value={formData.email}
-                                    onChange={handleChange}
-                                    className="flex-1 px-4 py-2 border border-gray-300 rounded bg-white focus:outline-none focus:ring-2 focus:ring-[#079DB6]"
-                                    placeholder="Your email"
-                                />
-                            </div>
-
-                            <div className="flex items-center gap-4">
-                                <label htmlFor="phone" className="w-24 text-gray-700">Phone</label>
-                                <input
-                                    type="tel"
-                                    id="phone"
-                                    name="phone"
-                                    value={formData.phone}
-                                    onChange={handleChange}
-                                    className="flex-1 px-4 py-2 border border-gray-300 rounded bg-white focus:outline-none focus:ring-2 focus:ring-[#079DB6]"
-                                    placeholder="Your phone number"
-                                />
-                            </div>
-
-                            <div className="flex items-center gap-4">
-                                <label htmlFor="message" className="w-24 text-gray-700">Message</label>
-                                <input
-                                    type="text"
-                                    id="message"
-                                    name="message"
-                                    value={formData.message}
-                                    onChange={handleChange}
-                                    className="flex-1 px-4 py-2 border border-gray-300 rounded bg-white focus:outline-none focus:ring-2 focus:ring-[#079DB6]"
-                                    placeholder="Your message"
-                                />
-                            </div>
+                        <form className="space-y-6 flex-grow">
+                            {/* Each field wrapper */}
+                            {[
+                                { label: "Name", id: "name", type: "text", placeholder: "Your name" },
+                                { label: "Email", id: "email", type: "email", placeholder: "Your email" },
+                                { label: "Phone", id: "phone", type: "tel", placeholder: "Your phone number" },
+                                { label: "Message", id: "message", type: "text", placeholder: "Your message" },
+                            ].map(({ label, id, type, placeholder }) => (
+                                <div
+                                    key={id}
+                                    className="flex flex-col sm:flex-row sm:items-center gap-2 sm:gap-4"
+                                >
+                                    <label htmlFor={id} className="text-gray-700 sm:w-24">
+                                        {label}
+                                    </label>
+                                    <input
+                                        type={type}
+                                        id={id}
+                                        name={id}
+                                        value={formData[id]}
+                                        onChange={handleChange}
+                                        placeholder={placeholder}
+                                        className="flex-1 px-4 py-2 border border-gray-300 rounded bg-white focus:outline-none focus:ring-2 focus:ring-[#079DB6]"
+                                    />
+                                </div>
+                            ))}
 
                             <div className="flex justify-end">
                                 <button
@@ -106,9 +80,8 @@ export default function Contacts() {
                         </form>
                     </div>
 
-                    {/* Right side - Contact info (narrower) */}
-                    <div className="flex-1 pl-0 md:pl-8">
-
+                    {/* Right side - Contact info (full width on mobile) */}
+                    <div className="flex-1 pl-0 md:pl-8 mt-8 md:mt-0">
                         <div className="space-y-6">
                             <div className="flex items-start">
                                 <FaPhone className="text-[#079DB6] mt-1 mr-4" size={20} />
@@ -146,7 +119,6 @@ export default function Contacts() {
                                 </a>
                             </div>
                         </div>
-
                     </div>
 
                 </div>
