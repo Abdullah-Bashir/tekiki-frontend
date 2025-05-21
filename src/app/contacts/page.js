@@ -64,7 +64,7 @@ export default function Contacts() {
                                         value={formData[id]}
                                         onChange={handleChange}
                                         placeholder={placeholder}
-                                        className="flex-1 px-4 py-2 border border-gray-300 rounded bg-white focus:outline-none focus:ring-2 focus:ring-[#079DB6]"
+                                        className="flex-1 px-4 py-2 border border-gray-300 rounded bg-gray-200 focus:outline-none focus:ring-2 focus:ring-[#079DB6]"
                                     />
                                 </div>
                             ))}

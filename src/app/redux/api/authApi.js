@@ -24,14 +24,7 @@ export const authApi = createApi({
                 body: userData,
             }),
         }),
-        // 2️⃣ Verify OTP / Account Verification
-        verifyOtp: builder.mutation({
-            query: ({ email, verificationCode }) => ({
-                url: '/verify',
-                method: 'POST',
-                body: { email, verificationCode },
-            }),
-        }),
+
         // 3️⃣ Login User
         loginUser: builder.mutation({
             query: (credentials) => ({
@@ -40,14 +33,7 @@ export const authApi = createApi({
                 body: credentials,
             }),
         }),
-        // 4️⃣ Resend OTP
-        resendOtp: builder.mutation({
-            query: ({ email }) => ({
-                url: '/resend-otp',
-                method: 'POST',
-                body: { email },
-            }),
-        }),
+
         // 5️⃣ Validate Token
         validateToken: builder.query({
             query: () => ({
@@ -61,8 +47,6 @@ export const authApi = createApi({
 // Export auto-generated hooks
 export const {
     useRegisterUserMutation,
-    useVerifyOtpMutation,
     useLoginUserMutation,
-    useResendOtpMutation,
     useValidateTokenQuery,
 } = authApi;
