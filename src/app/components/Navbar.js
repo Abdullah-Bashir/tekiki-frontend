@@ -56,6 +56,7 @@ export function Navbar() {
 
     return (
         <nav>
+
             {/* Upper strap */}
             <div className="flex justify-between items-center bg-white py-3 px-4 sm:px-6 border-b border-gray-300 shadow-sm select-none">
                 {/* Left: Social Icons */}
