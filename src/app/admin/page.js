@@ -1,5 +1,8 @@
-'use client'
-import React, { useState, useEffect } from 'react';
+
+"use client"
+// export const dynamic = 'force-dynamic';
+
+import { useState, useEffect } from 'react';
 import { useSearchParams } from 'next/navigation';
 import AdminSidebar from '@/app/admin/components/AdminSidebar';
 import AdminNavbar from '@/app/admin/components/AdminNavbar';
