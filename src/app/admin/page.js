@@ -1,9 +1,7 @@
 
 "use client"
-export const dynamic = 'force-dynamic';
 
 import { useState, useEffect } from 'react';
-import { useSearchParams } from 'next/navigation';
 import AdminSidebar from '@/app/admin/components/AdminSidebar';
 import AdminNavbar from '@/app/admin/components/AdminNavbar';
 import AdminOverview from '@/app/admin/components/AdminOverview';
@@ -11,17 +9,10 @@ import ManageUsers from '@/app/admin/components/ManageUsers';
 import ManageApplications from '@/app/admin/components/AdminApplications';
 
 function AdminDashboard() {
-    const searchParams = useSearchParams();
     const [activeComponent, setActiveComponent] = useState('overview');
     const [mobileSidebarOpen, setMobileSidebarOpen] = useState(false);
 
-    // Sync with URL parameters
-    useEffect(() => {
-        const view = searchParams.get('view');
-        if (view && ['overview', 'users', 'applications'].includes(view)) {
-            setActiveComponent(view);
-        }
-    }, [searchParams]);
+
 
     const toggleSidebar = () => {
         setMobileSidebarOpen(!mobileSidebarOpen);
