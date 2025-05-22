@@ -3,7 +3,7 @@
 import { useState } from "react";
 import { useRouter } from "next/navigation";
 import axios from "axios";
-import { toast } from "react-toastify";
+import { toast, ToastContainer } from "react-toastify";
 import { Navbar } from "@/app/components/Navbar";
 import { Footer } from "../components/Footer";
 import Link from "next/link";
@@ -36,11 +36,14 @@ export default function Login() {
 
             toast.success("Login successful!");
 
-            if (role === "admin") {
-                router.push("/admin");
-            } else {
-                router.push("/dashboard");
-            }
+            setTimeout(() => {
+                if (role === "admin") {
+                    router.push("/admin");
+                } else {
+                    router.push("/dashboard");
+                }
+            }, 2000);
+
         } catch (err) {
             if (err.response) {
                 toast.error(err.response.data?.message || "Invalid credentials.");
@@ -55,6 +58,8 @@ export default function Login() {
     return (
         <>
             <Navbar />
+            <ToastContainer />
+
             <div className="min-h-screen flex items-center justify-center py-12 px-4 sm:px-6 lg:px-8">
                 <div className="max-w-md w-full space-y-8 border p-6 rounded-xl shadow-lg">
                     <h2 className="text-center text-2xl font-bold">Sign in to your account</h2>

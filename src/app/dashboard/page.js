@@ -7,6 +7,7 @@ import Profile from '@/app/dashboard/components/Profile';
 import Applications from '@/app/dashboard/components/Applications'
 
 function Dashboard() {
+
     const [activeComponent, setActiveComponent] = useState('overview');
     const [mobileSidebarOpen, setMobileSidebarOpen] = useState(false);
 
@@ -29,6 +30,7 @@ function Dashboard() {
 
     return (
         <div className="flex h-screen w-full bg-gray-100">
+
             {/* Sidebar */}
             <Sidebar
                 activeComponent={activeComponent}
@@ -56,6 +58,7 @@ function Dashboard() {
                     {renderComponent()}
                 </div>
             </div>
+
         </div>
     );
 }

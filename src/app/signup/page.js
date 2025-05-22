@@ -1,25 +1,97 @@
 "use client";
 
 import { useState } from "react";
+import { useRouter } from "next/navigation";
+import axios from "axios";
+import { toast, ToastContainer } from "react-toastify";
+import "react-toastify/dist/ReactToastify.css";
+
 import { Navbar } from "@/app/components/Navbar";
 import { Footer } from "../components/Footer";
 import Link from "next/link";
 import { FiEye, FiEyeOff } from "react-icons/fi";
 
 export default function Signup() {
+    const router = useRouter();
+
+    const [formData, setFormData] = useState({
+        username: "",
+        email: "",
+        password: "",
+        confirmPassword: "",
+        terms: false,
+    });
 
     const [showPassword, setShowPassword] = useState(false);
     const [showConfirmPassword, setShowConfirmPassword] = useState(false);
+    const [loading, setLoading] = useState(false);
+
+    const handleChange = (e) => {
+        const { name, value, type, checked } = e.target;
+        setFormData({
+            ...formData,
+            [name]: type === "checkbox" ? checked : value,
+        });
+    };
+
+    const handleSubmit = async (e) => {
+        e.preventDefault();
+
+        const { username, email, password, confirmPassword, terms } = formData;
+
+        if (!username || !email || !password || !confirmPassword) {
+            toast.error("Please fill all the fields");
+            return;
+        }
+
+        if (password !== confirmPassword) {
+            toast.error("Passwords do not match");
+            return;
+        }
+
+        if (!terms) {
+            toast.error("You must agree to the terms");
+            return;
+        }
+
+        try {
+            setLoading(true);
+            const res = await axios.post("http://localhost:5000/api/auth/signup", {
+                username,
+                email,
+                password,
+            });
+
+            toast.success(res.data.message || "Signup successful");
+
+            setFormData({
+                username: "",
+                email: "",
+                password: "",
+                confirmPassword: "",
+                terms: false,
+            });
+
+            setTimeout(() => {
+                router.push("/login");
+            }, 2000);
+        } catch (err) {
+            toast.error(err.response?.data?.message || "Signup failed");
+        } finally {
+            setLoading(false);
+        }
+    };
 
     return (
         <>
             <Navbar />
-            <div className="min-h-screen flex items-center justify-center py-12 px-4 sm:px-6 lg:px-8">
+            <ToastContainer />
+            <div className="min-h-screen flex items-center justify-center py-24 px-4 sm:px-6 lg:px-8">
                 <div className="max-w-md w-full space-y-8 border p-6 rounded-xl shadow-lg">
                     <div>
                         <h2 className="text-center text-2xl font-bold">Create your account</h2>
                     </div>
-                    <form className="mt-8 space-y-6">
+                    <form onSubmit={handleSubmit} className="mt-8 space-y-6">
                         <div className="space-y-4">
                             <div>
                                 <label htmlFor="username" className="block text-sm font-medium">
@@ -30,6 +102,8 @@ export default function Signup() {
                                     name="username"
                                     type="text"
                                     required
+                                    value={formData.username}
+                                    onChange={handleChange}
                                     className="w-full px-3 py-1 border border-gray-300 rounded-full focus:outline-none focus:ring focus:border-blue-500"
                                 />
                             </div>
@@ -43,6 +117,8 @@ export default function Signup() {
                                     name="email"
                                     type="email"
                                     required
+                                    value={formData.email}
+                                    onChange={handleChange}
                                     className="w-full px-3 py-1 border border-gray-300 rounded-full focus:outline-none focus:ring focus:border-blue-500"
                                 />
                             </div>
@@ -56,6 +132,8 @@ export default function Signup() {
                                     name="password"
                                     type={showPassword ? "text" : "password"}
                                     required
+                                    value={formData.password}
+                                    onChange={handleChange}
                                     className="w-full px-3 py-1 border border-gray-300 rounded-full focus:outline-none focus:ring focus:border-blue-500"
                                 />
                                 <div
@@ -67,15 +145,17 @@ export default function Signup() {
                             </div>
 
                             <div className="relative">
-                                <label htmlFor="confirm-password" className="block text-sm font-medium">
+                                <label htmlFor="confirmPassword" className="block text-sm font-medium">
                                     Confirm Password
                                 </label>
                                 <input
-                                    id="confirm-password"
+                                    id="confirmPassword"
                                     name="confirmPassword"
                                     type={showConfirmPassword ? "text" : "password"}
                                     required
-                                    className="w-full px-3 py-1 rounded-full border border-gray-300 focus:outline-none focus:ring focus:border-blue-500"
+                                    value={formData.confirmPassword}
+                                    onChange={handleChange}
+                                    className="w-full px-3 py-1 border border-gray-300 rounded-full focus:outline-none focus:ring focus:border-blue-500"
                                 />
                                 <div
                                     className="absolute inset-y-0 right-0 top-5 pr-3 flex items-center cursor-pointer"
@@ -90,7 +170,8 @@ export default function Signup() {
                                     id="terms"
                                     name="terms"
                                     type="checkbox"
-                                    required
+                                    checked={formData.terms}
+                                    onChange={handleChange}
                                     className="h-4 w-4 text-[#079DB6] focus:ring-[#079DB6] border-gray-300 rounded"
                                 />
                                 <label htmlFor="terms" className="ml-2 block text-sm text-gray-700">
@@ -104,16 +185,15 @@ export default function Signup() {
                                     </a>.
                                 </label>
                             </div>
-
-
                         </div>
 
                         <div>
                             <button
                                 type="submit"
-                                className="w-full cursor-pointer flex justify-center py-1 px-4 border border-transparent rounded-full shadow-sm text-white bg-[#079DB6] hover:bg-blue-700 focus:outline-none"
+                                disabled={loading}
+                                className="w-full flex justify-center py-1 px-4 border border-transparent rounded-full shadow-sm text-white bg-[#079DB6] hover:bg-blue-700 focus:outline-none"
                             >
-                                Sign up
+                                {loading ? "Signing up..." : "Sign up"}
                             </button>
                         </div>
 

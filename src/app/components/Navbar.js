@@ -46,7 +46,7 @@ export function Navbar() {
     const navItems = [
         { href: "/", label: "Home" },
         { href: "/services", label: "Services" },
-        { href: "/contacts", label: "Contacts" },
+        { href: "/contacts", label: "Contact Us" },
         { href: "/about-us", label: "About Us" },
     ];
 
@@ -56,7 +56,6 @@ export function Navbar() {
 
     return (
         <nav>
-
             {/* Upper strap */}
             <div className="flex justify-between items-center bg-white py-3 px-4 sm:px-6 border-b border-gray-300 shadow-sm select-none">
                 {/* Left: Social Icons */}
