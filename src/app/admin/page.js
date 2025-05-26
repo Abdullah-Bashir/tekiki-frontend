@@ -1,18 +1,38 @@
-
 "use client"
 
 import { useState, useEffect } from 'react';
+import { useRouter } from 'next/navigation';
+import { useValidateTokenQuery } from '@/app/redux/api/authApi';
 import AdminSidebar from '@/app/admin/components/AdminSidebar';
 import AdminNavbar from '@/app/admin/components/AdminNavbar';
 import AdminOverview from '@/app/admin/components/AdminOverview';
 import ManageUsers from '@/app/admin/components/ManageUsers';
 import ManageApplications from '@/app/admin/components/AdminApplications';
+import Loader from '@/app/components/Loader';
 
 function AdminDashboard() {
+    const router = useRouter();
     const [activeComponent, setActiveComponent] = useState('overview');
     const [mobileSidebarOpen, setMobileSidebarOpen] = useState(false);
+    const [isAuthorized, setIsAuthorized] = useState(false);
 
+    // Validate token and check admin role
+    const { data, isLoading, isError } = useValidateTokenQuery();
 
+    useEffect(() => {
+        if (!isLoading) {
+            if (isError || !data?.user) {
+                // Redirect to login if not authenticated
+                router.push('/login');
+            } else if (data.user.role !== 'admin') {
+                // Redirect to dashboard if not admin
+                router.push('/dashboard');
+            } else {
+                // User is authenticated admin
+                setIsAuthorized(true);
+            }
+        }
+    }, [data, isLoading, isError, router]);
 
     const toggleSidebar = () => {
         setMobileSidebarOpen(!mobileSidebarOpen);
@@ -30,6 +50,15 @@ function AdminDashboard() {
                 return <AdminOverview setActiveComponent={setActiveComponent} />;
         }
     };
+
+    // Show loader while checking authorization
+    if (isLoading || !isAuthorized) {
+        return (
+            <div className="flex items-center justify-center h-screen">
+                <Loader />
+            </div>
+        );
+    }
 
     return (
         <div className="flex h-screen w-full bg-gray-100">

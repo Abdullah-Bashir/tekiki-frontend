@@ -1,13 +1,34 @@
+
 "use client";
+
 import Link from "next/link";
 import { motion, AnimatePresence } from "framer-motion";
-import { useState } from "react";
-import { FaBars, FaTimes } from "react-icons/fa";
+import { useState, useEffect } from "react";
+import { FaBars, FaTimes, FaSpinner, FaUser } from "react-icons/fa";
 import { useRouter } from "next/navigation";
+import { useValidateTokenQuery, useLogoutUserMutation } from "@/app/redux/api/authApi";
 
 export function Navbar() {
     const [isOpen, setIsOpen] = useState(false);
     const router = useRouter();
+
+    // RTK Query hooks
+    const {
+        data: authData,
+        isLoading,
+        isError,
+        refetch
+    } = useValidateTokenQuery(undefined, {
+        refetchOnMountOrArgChange: true
+    });
+
+    const [logoutUser, { isLoading: isLoggingOut }] = useLogoutUserMutation();
+
+    // Check authentication status
+    const isAuthenticated = authData?.valid === true;
+    const userData = authData?.user || null;
+
+    // Animation variants
     const iconHover = {
         scale: 1.2,
         rotate: 10,
@@ -54,6 +75,20 @@ export function Navbar() {
         router.push("/login");
     };
 
+    const handleLogout = async () => {
+        try {
+            await logoutUser().unwrap();
+            window.location.href = "/login"; // This forces a full refresh
+        } catch (err) {
+            console.error("Logout failed:", err);
+        }
+    };
+
+
+    const handleProfile = () => {
+        router.push("/dashboard");
+    };
+
     return (
         <nav>
             {/* Upper strap */}
@@ -84,25 +119,43 @@ export function Navbar() {
                     </motion.a>
                 </div>
 
-                {/* Center: Website name - Hidden on mobile */}
+                {/* Center: Website name */}
                 <motion.div
                     className="hidden sm:block font-extrabold text-xl sm:text-2xl text-gray-900 select-text cursor-pointer"
                     initial={{ opacity: 0, y: -20 }}
                     animate={{ opacity: 1, y: 0 }}
                     transition={{ duration: 0.8, ease: "easeOut" }}
                     whileHover={{ scale: 1.1, color: "#079DB6" }}
+                    onClick={() => router.push("/")}
                 >
                     Tekiki
                 </motion.div>
 
-                {/* Right: Login button - Hidden on mobile */}
-                <button
-                    onClick={handleLogin}
-                    className="hidden sm:block bg-[#079DB6] text-white font-semibold px-4 sm:px-12 py-1 sm:py-2 rounded-full shadow-md text-sm sm:text-base
-                    hover:bg-[#057a8a] active:scale-95 transition duration-200 ease-in-out cursor-pointer"
-                >
-                    Login
-                </button>
+                {/* Right: Auth buttons - Hidden on mobile */}
+                <div className="hidden sm:flex items-center space-x-4">
+                    {isLoading ? (
+                        <FaSpinner className="animate-spin text-gray-500" />
+                    ) : isAuthenticated ? (
+                        <>
+                            <motion.button
+                                onClick={handleProfile}
+                                className="bg-[#079DB6] hover:bg-[#057a8a] text-white font-semibold px-6 py-2 rounded-full shadow-md text-sm active:scale-95 transition duration-200 ease-in-out cursor-pointer flex items-center space-x-2"
+                                whileHover={{ scale: 1.05 }}
+                            >
+                                <FaUser className="text-sm" />
+                                <span>{userData?.name || "Dashboard"}</span>
+                            </motion.button>
+
+                        </>
+                    ) : (
+                        <button
+                            onClick={handleLogin}
+                            className="bg-[#079DB6] hover:bg-[#057a8a] text-white font-semibold px-6 py-2 rounded-full shadow-md text-sm active:scale-95 transition duration-200 ease-in-out cursor-pointer"
+                        >
+                            Login
+                        </button>
+                    )}
+                </div>
 
                 {/* Mobile menu button */}
                 <button
@@ -116,6 +169,7 @@ export function Navbar() {
                         <FaBars className="w-6 h-6" />
                     )}
                 </button>
+
             </div>
 
             {/* Lower strap - Hidden on mobile */}
@@ -156,6 +210,10 @@ export function Navbar() {
                             <motion.div
                                 className="font-extrabold text-xl text-gray-900 py-2"
                                 variants={mobileItemVariants}
+                                onClick={() => {
+                                    router.push("/");
+                                    setIsOpen(false);
+                                }}
                             >
                                 Tekiki
                             </motion.div>
@@ -185,16 +243,48 @@ export function Navbar() {
                             className="px-4 py-4"
                             variants={mobileItemVariants}
                         >
-                            <button
-                                onClick={() => {
-                                    handleLogin();
-                                    setIsOpen(false);
-                                }}
-                                className="w-full bg-[#079DB6] text-white font-semibold px-4 py-2 rounded-full shadow-md
-                                hover:bg-[#057a8a] active:scale-95 transition duration-200 ease-in-out cursor-pointer"
-                            >
-                                Login
-                            </button>
+                            {isLoading ? (
+                                <div className="w-full flex justify-center">
+                                    <FaSpinner className="animate-spin text-gray-500 text-2xl" />
+                                </div>
+                            ) : isAuthenticated ? (
+                                <>
+                                    <div className="flex items-center justify-between mb-4 px-2">
+                                        <div className="flex items-center space-x-3">
+                                            <div className="bg-gray-200 p-2 rounded-full">
+                                                <FaUser className="text-gray-600" />
+                                            </div>
+                                            <span className="font-medium">{userData?.name || "User"}</span>
+                                        </div>
+                                        <button
+                                            onClick={handleProfile}
+                                            className="text-sm text-[#079DB6] font-medium"
+                                        >
+                                            View Profile
+                                        </button>
+                                    </div>
+                                    <button
+                                        onClick={() => {
+                                            handleLogout();
+                                            setIsOpen(false);
+                                        }}
+                                        disabled={isLoggingOut}
+                                        className={`w-full bg-red-600 hover:bg-red-700 text-white font-semibold px-4 py-2 rounded-full shadow-md active:scale-95 transition duration-200 ease-in-out ${isLoggingOut ? "opacity-70 cursor-not-allowed" : "cursor-pointer"}`}
+                                    >
+                                        {isLoggingOut ? <FaSpinner className="animate-spin mx-2" /> : "Logout"}
+                                    </button>
+                                </>
+                            ) : (
+                                <button
+                                    onClick={() => {
+                                        handleLogin();
+                                        setIsOpen(false);
+                                    }}
+                                    className="w-full bg-[#079DB6] hover:bg-[#057a8a] text-white font-semibold px-4 py-2 rounded-full shadow-md active:scale-95 transition duration-200 ease-in-out cursor-pointer"
+                                >
+                                    Login
+                                </button>
+                            )}
                         </motion.div>
                     </motion.div>
                 )}

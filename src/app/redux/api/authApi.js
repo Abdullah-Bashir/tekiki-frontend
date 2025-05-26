@@ -1,52 +1,75 @@
 import { createApi, fetchBaseQuery } from '@reduxjs/toolkit/query/react';
 
-const API_URL = "http://localhost:5000/api/auth";
+const API_URL = process.env.NEXT_PUBLIC_API_URL || "http://localhost:5000/api/auth";
 
 export const authApi = createApi({
     reducerPath: 'authApi',
     baseQuery: fetchBaseQuery({
         baseUrl: API_URL,
-        prepareHeaders: (headers) => {
-            const token = localStorage.getItem("authToken");
-            if (token) {
-                headers.set("Authorization", `Bearer ${token}`);
-            }
-            return headers;
-        },
+        credentials: 'include',
     }),
-
     endpoints: (builder) => ({
-        // 1️⃣ Register User
-        registerUser: builder.mutation({
+
+        // Signup/Register User
+        signupUser: builder.mutation({
             query: (userData) => ({
-                url: '/register',
+                url: '/signup',
                 method: 'POST',
                 body: userData,
             }),
         }),
 
-        // 3️⃣ Login User
+        // Login User
         loginUser: builder.mutation({
             query: (credentials) => ({
                 url: '/login',
                 method: 'POST',
                 body: credentials,
             }),
+            transformResponse: (response) => response.user,
         }),
 
-        // 5️⃣ Validate Token
         validateToken: builder.query({
+            query: () => '/validate-token',
+            // Keep the full response
+            transformResponse: (response) => response,
+            // Force refetch in certain situations
+            refetchOnMountOrArgChange: true,
+        }),
+
+        // Logout User
+        logoutUser: builder.mutation({
             query: () => ({
-                url: '/validate-token',
+                url: '/logout',
                 method: 'GET',
+            }),
+        }),
+
+        // Forgot Password
+        forgotPassword: builder.mutation({
+            query: (email) => ({
+                url: '/forgot-password',
+                method: 'POST',
+                body: { email },
+            }),
+        }),
+
+        // Reset Password
+        resetPassword: builder.mutation({
+            query: ({ token, newPassword, confirmPassword }) => ({
+                url: `/reset-password/${token}`,
+                method: 'PUT',
+                body: { newPassword, confirmPassword },
             }),
         }),
     }),
 });
 
-// Export auto-generated hooks
 export const {
-    useRegisterUserMutation,
+    useSignupUserMutation,
     useLoginUserMutation,
     useValidateTokenQuery,
+    useLogoutUserMutation,
+    useForgotPasswordMutation,
+    useResetPasswordMutation,
 } = authApi;

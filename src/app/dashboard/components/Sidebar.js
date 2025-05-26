@@ -43,6 +43,20 @@ const Sidebar = ({ activeComponent, setActiveComponent, mobileSidebarOpen, setMo
                     active={activeComponent === 'applications'}
                     onClick={() => handleItemClick('applications')}
                 />
+                {/* Mobile only button */}
+                <div className="md:hidden px-6 mt-6">
+                    <button
+                        onClick={() => {
+                            setMobileSidebarOpen(false);
+                            setActiveComponent(''); // optional reset
+                            window.location.href = '/services';
+                        }}
+                        className="w-full bg-[#079DB6] text-white px-4 py-2 rounded-md hover:bg-[#068aa1] transition duration-200"
+                    >
+                        Create New Application
+                    </button>
+                </div>
+
             </nav>
         </div>
     );

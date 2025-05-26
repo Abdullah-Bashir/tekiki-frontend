@@ -2,7 +2,6 @@
 
 import { useState } from "react";
 import { useRouter } from "next/navigation";
-import axios from "axios";
 import { toast, ToastContainer } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 
@@ -10,6 +9,8 @@ import { Navbar } from "@/app/components/Navbar";
 import { Footer } from "../components/Footer";
 import Link from "next/link";
 import { FiEye, FiEyeOff } from "react-icons/fi";
+
+import { useSignupUserMutation } from "@/app/redux/api/authApi"; // Adjust the path as needed
 
 export default function Signup() {
     const router = useRouter();
@@ -24,7 +25,8 @@ export default function Signup() {
 
     const [showPassword, setShowPassword] = useState(false);
     const [showConfirmPassword, setShowConfirmPassword] = useState(false);
-    const [loading, setLoading] = useState(false);
+
+    const [signupUser, { isLoading }] = useSignupUserMutation();
 
     const handleChange = (e) => {
         const { name, value, type, checked } = e.target;
@@ -55,14 +57,9 @@ export default function Signup() {
         }
 
         try {
-            setLoading(true);
-            const res = await axios.post("http://localhost:5000/api/auth/signup", {
-                username,
-                email,
-                password,
-            });
+            const res = await signupUser({ username, email, password }).unwrap();
 
-            toast.success(res.data.message || "Signup successful");
+            toast.success(res.message || "Signup successful");
 
             setFormData({
                 username: "",
@@ -76,9 +73,7 @@ export default function Signup() {
                 router.push("/login");
             }, 2000);
         } catch (err) {
-            toast.error(err.response?.data?.message || "Signup failed");
-        } finally {
-            setLoading(false);
+            toast.error(err?.data?.message || "Signup failed");
         }
     };
 
@@ -190,10 +185,10 @@ export default function Signup() {
                         <div>
                             <button
                                 type="submit"
-                                disabled={loading}
+                                disabled={isLoading}
                                 className="w-full flex justify-center py-1 px-4 border border-transparent rounded-full shadow-sm text-white bg-[#079DB6] hover:bg-blue-700 focus:outline-none"
                             >
-                                {loading ? "Signing up..." : "Sign up"}
+                                {isLoading ? "Signing up..." : "Sign up"}
                             </button>
                         </div>
 

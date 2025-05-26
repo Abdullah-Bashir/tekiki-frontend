@@ -20,7 +20,7 @@ const Navbar = ({ toggleSidebar }) => {
             toast.success("Logged out successfully!");
 
             setTimeout(() => {
-                router.push('/login');
+                window.location.href = "/login";
             }, 1500);
         } catch (error) {
             toast.error("Logout failed. Try again.");
@@ -45,20 +45,34 @@ const Navbar = ({ toggleSidebar }) => {
                 <div className="w-8 h-8 rounded-full bg-gray-300 flex items-center justify-center overflow-hidden">
                     <img src="/profile.png" alt="profile" className="w-full h-full object-cover" />
                 </div>
+
+                {/* Desktop only button */}
+                <div className="hidden md:block">
+                    <button
+                        onClick={() => router.push('/services')}
+                        className="bg-[#079DB6] cursor-pointer text-white px-2 py-1 rounded-md hover:bg-[#068aa1] transition duration-200"
+                    >
+                        Create New Application
+                    </button>
+                </div>
+
                 <button
                     onClick={handleLogout}
                     disabled={loggingOut}
-                    className="flex items-center text-gray-600 hover:text-gray-900 transition-colors duration-200"
+                    className="flex items-center rounded-md cursor-pointer text-gray-600 hover:text-gray-900 hover:bg-gray-300 p-1 transition-colors duration-200 relative"
                 >
-                    {loggingOut ? (
-                        <span className="animate-spin w-4 h-4 border-2 border-t-transparent border-gray-600 rounded-full mr-1"></span>
-                    ) : (
-                        <FiLogOut className="mr-1" size={16} />
-                    )}
+                    <FiLogOut className="mr-1" size={16} />
                     <span className="hidden md:inline">
                         {loggingOut ? 'Logging out...' : 'Logout'}
                     </span>
+                    {loggingOut && (
+                        <span className="absolute right-[-20px] md:right-[-24px] top-1/2 transform -translate-y-1/2">
+                            <span className="w-3 h-3 border-2 border-gray-400 border-t-transparent rounded-full animate-spin inline-block"></span>
+                        </span>
+                    )}
                 </button>
+
+
             </div>
         </div>
     );
