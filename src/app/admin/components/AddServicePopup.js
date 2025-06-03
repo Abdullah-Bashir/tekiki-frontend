@@ -1,3 +1,4 @@
+// src/app/admin/components/AddServicePopup.js
 import React, { useState, useRef } from 'react';
 import { toast } from 'react-toastify';
 import { createService, fetchServices } from '@/app/redux/api/serviceSlice';

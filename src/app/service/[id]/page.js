@@ -1,3 +1,4 @@
+// src/app/service/[id]/page.js
 "use client";
 
 import { use } from "react";
@@ -127,14 +128,11 @@ export default function ServiceDetail({ params: paramsPromise }) {
                                 <div className="mt-4">
                                     {currentService.documents?.map((doc, index) => (
                                         <a
-                                            key={index}
-                                            href={doc.url}
-                                            download
-                                            target="_blank"
-                                            rel="noopener noreferrer"
+                                            key={doc._id}
+                                            href={`${process.env.NEXT_PUBLIC_API_URL}/api/service/${currentService._id}/download/${doc._id}`}
                                             className="flex items-center gap-2 p-2 hover:bg-gray-100 rounded-lg transition-colors"
                                         >
-                                            <span>{doc.url.split('/').pop()}</span>
+                                            <span>{doc.originalName}</span>
                                         </a>
                                     ))}
                                 </div>

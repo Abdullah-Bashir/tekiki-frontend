@@ -13,7 +13,7 @@ const AdminNavbar = ({ toggleSidebar }) => {
     const handleLogout = async () => {
         setLoggingOut(true);
         try {
-            await axios.get('http://localhost:5000/api/auth/logout', {
+            await axios.get(`${process.env.NEXT_PUBLIC_API_URL}/api/auth/logout`, {
                 withCredentials: true,
             });
 

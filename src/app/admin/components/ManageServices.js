@@ -1,3 +1,4 @@
+// src/app/admin/components/ManageServices.js
 import React, { useState, useEffect } from 'react';
 import { useDispatch } from 'react-redux';
 import { fetchServices } from '@/app/redux/api/serviceSlice';

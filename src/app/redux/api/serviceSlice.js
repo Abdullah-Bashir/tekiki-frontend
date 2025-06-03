@@ -1,7 +1,7 @@
 import { createSlice, createAsyncThunk } from '@reduxjs/toolkit';
 import axios from 'axios';
 
-const API_URL = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:5000/api/service';
+const API_URL = `${process.env.NEXT_PUBLIC_API_URL}/api/service`;
 
 // Helper function for error handling
 const handleAsyncThunkError = (err) => {
