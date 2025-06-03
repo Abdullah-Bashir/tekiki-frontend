@@ -1,6 +1,7 @@
 import { configureStore } from "@reduxjs/toolkit";
 import { authApi } from "./api/authApi";
 import userReducer from "./api/userSlice"; // This will contain our async thunks
+import serviceReducer from "./api/serviceSlice"
 
 export const store = configureStore({
     reducer: {
@@ -8,6 +9,7 @@ export const store = configureStore({
         [authApi.reducerPath]: authApi.reducer,
         // Add your user slice with async thunks
         user: userReducer,
+        service: serviceReducer
     },
     // Adding the api middleware enables caching, invalidation, polling, etc.
     middleware: (getDefaultMiddleware) =>

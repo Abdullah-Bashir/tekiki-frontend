@@ -1,6 +1,6 @@
 'use client';
 import React, { useState, useEffect } from 'react';
-import { FiSearch, FiEdit2, FiTrash2, FiUserPlus, FiX } from 'react-icons/fi';
+import { FiSearch, FiEdit2, FiTrash2, FiX } from 'react-icons/fi';
 import { useDispatch, useSelector } from 'react-redux';
 import {
     fetchAllUsers,
@@ -17,8 +17,7 @@ const ManageUsers = () => {
     const [currentUser, setCurrentUser] = useState(null);
     const [editForm, setEditForm] = useState({
         username: '',
-        email: '',
-        role: 'user'
+        email: ''
     });
 
     const dispatch = useDispatch();
@@ -42,11 +41,13 @@ const ManageUsers = () => {
         }
     }, [success, error, dispatch]);
 
-    const filteredUsers = users.filter(
-        (user) =>
+    // Filter users based on search and remove admins
+    const filteredUsers = users
+        .filter(user => user.role !== 'admin')
+        .filter(user =>
             user.username.toLowerCase().includes(searchTerm.toLowerCase()) ||
             user.email.toLowerCase().includes(searchTerm.toLowerCase())
-    );
+        );
 
     const handleDelete = (userId) => {
         if (window.confirm('Are you sure you want to delete this user?')) {
@@ -58,8 +59,7 @@ const ManageUsers = () => {
         setCurrentUser(user);
         setEditForm({
             username: user.username,
-            email: user.email,
-            role: user.role
+            email: user.email
         });
         setEditModalOpen(true);
     };
@@ -98,7 +98,7 @@ const ManageUsers = () => {
                 <input
                     type="text"
                     placeholder="Search users..."
-                    className="w-full pl-10 pr-3 py-2 rounded-md outline-none bg-white border border-gray-300 focus:ring-2 focus:ring-[#079DB6] transition-all"
+                    className="w-full pl-10 pr-3 py-2 rounded-md outline-none bg-white  border-gray-300 focus:ring-2 focus:ring-[#079DB6] transition-all"
                     value={searchTerm}
                     onChange={(e) => setSearchTerm(e.target.value)}
                 />
@@ -115,9 +115,6 @@ const ManageUsers = () => {
                             <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
                                 Email
                             </th>
-                            <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                                Role
-                            </th>
                             <th className="px-6 py-3 text-center text-xs font-medium text-gray-500 uppercase tracking-wider">
                                 Actions
                             </th>
@@ -131,14 +128,6 @@ const ManageUsers = () => {
                                 </td>
                                 <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
                                     {user.email}
-                                </td>
-                                <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
-                                    <span className={`px-2 py-1 text-xs rounded-full ${user.role === 'admin'
-                                        ? 'bg-blue-100 text-blue-800'
-                                        : 'bg-green-100 text-green-800'
-                                        }`}>
-                                        {user.role}
-                                    </span>
                                 </td>
                                 <td className="px-6 py-4 whitespace-nowrap text-sm font-medium">
                                     <div className="flex items-center justify-center space-x-4">
@@ -164,12 +153,9 @@ const ManageUsers = () => {
                 </table>
             </div>
 
-
-
             {/* Edit Modal */}
             {editModalOpen && (
                 <div className="fixed inset-0 z-50 flex items-center justify-center bg-white/30 backdrop-blur-sm p-2">
-
                     <div className="w-full max-w-md bg-white rounded-2xl shadow-xl border border-[#079DB6]">
 
                         {/* Modal Header */}
@@ -206,19 +192,6 @@ const ManageUsers = () => {
                                 />
                             </div>
 
-                            <div>
-                                <label className="block text-sm font-medium text-[#079DB6] mb-1">Role</label>
-                                <select
-                                    value={editForm.role}
-                                    onChange={(e) => setEditForm({ ...editForm, role: e.target.value })}
-                                    required
-                                    className="w-full px-4 py-2 border border-[#079DB6] rounded-full focus:outline-none focus:ring-2 focus:ring-[#079DB6]"
-                                >
-                                    <option value="user">User</option>
-                                    <option value="admin">Admin</option>
-                                </select>
-                            </div>
-
                             <button
                                 type="submit"
                                 className="w-full py-2 rounded-full bg-[#079DB6] text-white font-semibold hover:bg-[#067f91] transition-all"
@@ -229,9 +202,6 @@ const ManageUsers = () => {
                     </div>
                 </div>
             )}
-
-
-
         </div>
     );
 };

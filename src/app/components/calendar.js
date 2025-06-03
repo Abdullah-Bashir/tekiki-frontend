@@ -3,9 +3,10 @@
 import { useState } from "react";
 import { ChevronLeft, ChevronRight, ChevronDown } from "lucide-react";
 
-export default function Calendar() {
-    const [currentDate, setCurrentDate] = useState(new Date(2025, 2, 1));
+export default function Calendar({ selectedDate, onChange, interviewDates = [] }) {
+    const [currentDate, setCurrentDate] = useState(new Date());
     const [isMonthDropdownOpen, setIsMonthDropdownOpen] = useState(false);
+    const [selectedDayTimes, setSelectedDayTimes] = useState(null);
 
     const month = currentDate.toLocaleString("default", { month: "long" });
     const year = currentDate.getFullYear();
@@ -23,10 +24,12 @@ export default function Calendar() {
 
     const goToPreviousMonth = () => {
         setCurrentDate(new Date(currentDate.getFullYear(), currentDate.getMonth() - 1, 1));
+        setSelectedDayTimes(null);
     };
 
     const goToNextMonth = () => {
         setCurrentDate(new Date(currentDate.getFullYear(), currentDate.getMonth() + 1, 1));
+        setSelectedDayTimes(null);
     };
 
     const toggleMonthDropdown = () => {
@@ -36,6 +39,68 @@ export default function Calendar() {
     const selectMonth = (monthIndex) => {
         setCurrentDate(new Date(currentDate.getFullYear(), monthIndex, 1));
         setIsMonthDropdownOpen(false);
+        setSelectedDayTimes(null);
+    };
+
+    const handleDateClick = (day) => {
+        if (!day) return;
+
+        const date = new Date(currentDate.getFullYear(), currentDate.getMonth(), day);
+        date.setHours(0, 0, 0, 0);
+
+        // Find times for this date
+        const timesForDate = interviewDates
+            .filter(interview => {
+                const interviewDate = new Date(interview.date);
+                interviewDate.setHours(0, 0, 0, 0);
+                return interviewDate.getTime() === date.getTime();
+            })
+            .map(interview => interview.time);
+
+        if (timesForDate.length > 0) {
+            setSelectedDayTimes({
+                date,
+                times: timesForDate
+            });
+            onChange(date); // Set the selected date
+            console.log(selectedDate)
+        }
+    };
+
+    const handleTimeSelect = (time) => {
+        if (!selectedDayTimes) return;
+
+        // Combine date and time
+        const [hours, minutes] = time.split(':').map(Number);
+        const dateWithTime = new Date(selectedDayTimes.date);
+        dateWithTime.setHours(hours, minutes);
+
+        onChange(dateWithTime);
+    };
+
+    const isInterviewDate = (day) => {
+        if (!day) return false;
+
+        const date = new Date(currentDate.getFullYear(), currentDate.getMonth(), day);
+        date.setHours(0, 0, 0, 0);
+
+        return interviewDates.some(interview => {
+            const interviewDate = new Date(interview.date);
+            interviewDate.setHours(0, 0, 0, 0);
+            return interviewDate.getTime() === date.getTime();
+        });
+    };
+
+    const isSelectedDate = (day) => {
+        if (!day || !selectedDate) return false;
+
+        const date = new Date(currentDate.getFullYear(), currentDate.getMonth(), day);
+        date.setHours(0, 0, 0, 0);
+
+        const selDate = new Date(selectedDate);
+        selDate.setHours(0, 0, 0, 0);
+
+        return selDate.getTime() === date.getTime();
     };
 
     const days = generateDays();
@@ -100,7 +165,7 @@ export default function Calendar() {
             </div>
 
             {/* Calendar grid */}
-            <div className="grid grid-cols-7 gap-2 text-sm">
+            <div className="grid grid-cols-7 gap-2 text-sm mb-4">
                 {weekdays.map((day) => (
                     <div key={day} className="text-center text-gray-500 font-medium">
                         {day}
@@ -108,14 +173,55 @@ export default function Calendar() {
                 ))}
 
                 {days.map((day, index) => (
-                    <div
+                    <button
                         key={index}
-                        className={`text-center py-1 ${day ? "cursor-pointer hover:bg-gray-100 rounded-full" : ""}`}
+                        onClick={() => handleDateClick(day)}
+                        disabled={!day || !isInterviewDate(day)}
+                        className={`text-center py-1 relative
+                            ${!day ? "cursor-default" : "cursor-pointer"}
+                            ${isSelectedDate(day) ? "bg-teal-500 text-white rounded-full" : ""}
+                            ${!isSelectedDate(day) && isInterviewDate(day) ? "border-2 border-teal-500 rounded-full" : ""}
+                            ${!isSelectedDate(day) && isInterviewDate(day) ? "hover:bg-teal-50" : ""}
+                        `}
                     >
-                        {day && <span className="text-gray-700">{day}</span>}
-                    </div>
+                        {day && (
+                            <span className={`${isSelectedDate(day) ? "text-white" : "text-gray-700"}`}>
+                                {day}
+                            </span>
+                        )}
+                    </button>
                 ))}
             </div>
+
+            {/* Time slots section */}
+            {selectedDayTimes && (
+                <div className="mt-6">
+                    <h3 className="text-lg font-semibold mb-3">
+                        Available times for {selectedDayTimes.date.toLocaleDateString('en-US', {
+                            weekday: 'long',
+                            month: 'long',
+                            day: 'numeric'
+                        })}
+                    </h3>
+                    <div className="grid grid-cols-2 md:grid-cols-3 gap-3">
+                        {selectedDayTimes.times.map((time, index) => (
+                            <button
+                                key={index}
+                                onClick={() => handleTimeSelect(time)}
+                                className={`py-2 px-4 rounded-lg border text-center
+                                    ${selectedDate && selectedDate.getHours() === parseInt(time.split(':')[0]) &&
+                                        selectedDate.getMinutes() === parseInt(time.split(':')[1])
+                                        ? "bg-teal-500 text-white border-teal-600"
+                                        : "bg-white border-gray-300 hover:bg-teal-50 hover:border-teal-500"
+                                    }
+                                `}
+                            >
+                                {time}
+                            </button>
+                        ))}
+                    </div>
+                </div>
+            )}
         </div>
     );
 }

@@ -1,6 +1,8 @@
 "use client";
 
-import { useState } from "react";
+import { use } from "react";
+import { useState, useEffect } from "react";
+import { useDispatch, useSelector } from "react-redux";
 import { Navbar } from "@/app/components/Navbar";
 import { Footer } from "@/app/components/Footer";
 import { MdOutlineFileUpload } from "react-icons/md";
@@ -8,52 +10,105 @@ import DatePicker from "react-datepicker";
 import "react-datepicker/dist/react-datepicker.css";
 import { MdOutlineKeyboardArrowDown, MdOutlineKeyboardArrowUp } from "react-icons/md";
 import Calendar from "@/app/components/calendar";
+import { fetchServiceById } from "@/app/redux/api/serviceSlice";
+import Loader from "@/app/components/Loader";
 
-export default function ServiceDetail({ params }) {
+
+export default function ServiceDetail({ params: paramsPromise }) {
+    const params = use(paramsPromise); // Unwrap the promise using React.use()
+
     const [searchTerm, setSearchTerm] = useState("");
     const [selectedDate, setSelectedDate] = useState(null);
+    const [showAllMedia, setShowAllMedia] = useState(false);
     const [isDocsOpen, setIsDocsOpen] = useState(false);
     const [files, setFiles] = useState([]);
 
-    // Sample data - replace with actual data from your database
-    const service = {
-        id: params.id,
-        name: "Service Name",
-        description: "Detailed description of the service ".repeat(20),
-        images: ["/softwareHouse.jpg", "/softwareHouse.jpg", "/softwareHouse.jpg", "/softwareHouse.jpg"],
-        documents: [
-            { name: "Document1.pdf", url: "/docs/doc1.pdf" },
-            { name: "Document2.pdf", url: "/docs/doc2.pdf" },
-        ],
-    };
+    const dispatch = useDispatch();
+    const { currentService, loading, error } = useSelector((state) => state.service);
+
+    useEffect(() => {
+        dispatch(fetchServiceById(params.id));
+    }, [dispatch, params.id]);
+
 
     const handleFileUpload = (e) => {
         const uploadedFiles = Array.from(e.target.files);
         setFiles(uploadedFiles);
     };
 
+    if (loading) {
+        return (
+            <>
+                <Navbar />
+                <div className="min-h-screen flex items-center justify-center">
+                    <Loader />
+                </div>
+                <Footer />
+            </>
+        );
+    }
+
+    if (error) {
+        return (
+            <>
+                <Navbar />
+                <div className="min-h-screen flex items-center justify-center">
+                    <p className="text-red-500">{error}</p>
+                </div>
+                <Footer />
+            </>
+        );
+    }
+
+    if (!currentService) {
+        return (
+            <>
+                <Navbar />
+                <div className="min-h-screen flex items-center justify-center">
+                    <Loader />
+                </div>
+                <Footer />
+            </>
+        );
+    }
+
     return (
         <>
             <Navbar />
 
             <main className="container mx-auto px-4 py-8">
+
                 {/* Image Gallery */}
-                <div className="grid grid-cols-2 md:grid-cols-4 gap-2 mb-12">
-                    {service.images.map((img, index) => (
-                        <img
-                            key={index}
-                            src={img}
-                            alt={`Service ${index + 1}`}
-                            className="w-full h-64 object-cover"
-                        />
-                    ))}
+                <div className="mb-12">
+                    <div className="grid grid-cols-2 md:grid-cols-4 gap-2">
+                        {(showAllMedia ? currentService.media : currentService.media?.slice(0, 4))?.map(
+                            (mediaItem, index) => (
+                                <img
+                                    key={index}
+                                    src={mediaItem.url}
+                                    alt={`Service media ${index + 1}`}
+                                    className="w-full h-64 object-cover"
+                                />
+                            )
+                        )}
+                    </div>
+
+                    {currentService.media?.length > 4 && (
+                        <button
+                            onClick={() => setShowAllMedia(!showAllMedia)}
+                            className="text-green-600 text-sm mt-2 italic cursor-pointer hover:underline"
+                        >
+                            {showAllMedia ? "View less" : "View more"}
+                        </button>
+                    )}
                 </div>
 
                 <div className="flex flex-col md:flex-row gap-8">
+
                     {/* Left Section */}
                     <div className="md:w-1/2">
-                        <h1 className="text-4xl font-bold mb-6">{service.name}</h1>
-                        <p className="text-gray-600 mb-8">{service.description}</p>
+                        <h1 className="text-4xl font-bold mb-6">{currentService.serviceName}</h1>
+                        <p className="text-gray-600 mb-8">{currentService.description}</p>
 
                         <div>
                             <div
@@ -70,29 +125,36 @@ export default function ServiceDetail({ params }) {
 
                             {isDocsOpen && (
                                 <div className="mt-4">
-                                    {service.documents.map((doc, index) => (
+                                    {currentService.documents?.map((doc, index) => (
                                         <a
                                             key={index}
                                             href={doc.url}
                                             download
+                                            target="_blank"
+                                            rel="noopener noreferrer"
                                             className="flex items-center gap-2 p-2 hover:bg-gray-100 rounded-lg transition-colors"
                                         >
-                                            <span>{doc.name}</span>
+                                            <span>{doc.url.split('/').pop()}</span>
                                         </a>
                                     ))}
                                 </div>
                             )}
+
                         </div>
                     </div>
 
                     {/* Right Section */}
                     <div className="md:w-1/2 border border-gray-400 rounded-lg p-5">
+
                         <div className="mb-8">
                             <div className="rounded-lg bg-white">
-                                <Calendar selectedDate={selectedDate} onChange={setSelectedDate} />
+                                <Calendar
+                                    selectedDate={selectedDate}
+                                    onChange={setSelectedDate}
+                                    interviewDates={currentService.interviewDates}
+                                />
                             </div>
                         </div>
-
 
                         <div className="p-4">
                             <h2 className="text-2xl font-bold mb-4">Booking Summary</h2>

@@ -30,3 +30,31 @@
     z-index: 5;
   }
 }
+
+/* For WebKit-based browsers (Chrome, Safari, Edge) */
+::-webkit-scrollbar {
+  width: 6px;
+  height: 6px;
+}
+
+::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+::-webkit-scrollbar-thumb {
+  background-color: #9ba0a1;
+  /* or any color you want */
+  border-radius: 10px;
+  /* makes it rounded */
+  border: 1px solid transparent;
+  background-clip: content-box;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background-color: #5f6263;
+}
+
+/* Optional: for textarea or horizontal scrolling */
+textarea::-webkit-scrollbar {
+  height: 6px;
+}

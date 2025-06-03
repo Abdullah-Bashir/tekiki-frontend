@@ -1,20 +1,25 @@
 'use client'
 import React from 'react';
-import { FiUsers, FiFileText } from 'react-icons/fi';
 
 const AdminOverview = ({ setActiveComponent }) => {
     const quickActions = [
         {
             title: 'Manage Users',
             description: 'View, edit, and manage all user accounts',
-            icon: <img src="./profile.png" width={40} alt="" />,
+            icon: <img src="./profile.png" width={40} alt="Manage Users" />,
             action: () => setActiveComponent('users')
         },
         {
             title: 'Manage Applications',
             description: 'Review and process all applications',
-            icon: <img src="./application.png" width={40} alt="" />,
+            icon: <img src="./application.png" width={40} alt="Manage Applications" />,
             action: () => setActiveComponent('applications')
+        },
+        {
+            title: 'Manage Services',
+            description: 'Add, update, or remove available services',
+            icon: <img src="./citation.png" width={40} alt="Manage Services" />,
+            action: () => setActiveComponent('services')
         }
     ];
 

@@ -1,13 +1,11 @@
 'use client'
 import React from 'react';
-import { FiHome, FiUsers, FiFileText, FiX } from 'react-icons/fi';
+import { FiHome, FiUsers, FiFileText, FiX, FiSettings } from 'react-icons/fi';
 import SidebarItem from '@/app/dashboard/components/SidebarItem';
 
 const AdminSidebar = ({ activeComponent, setActiveComponent, mobileSidebarOpen, setMobileSidebarOpen }) => {
-
     const handleItemClick = (component) => {
         setActiveComponent(component);
-        // Close sidebar in mobile view when item is clicked
         if (window.innerWidth < 768) {
             setMobileSidebarOpen(false);
         }
@@ -17,7 +15,6 @@ const AdminSidebar = ({ activeComponent, setActiveComponent, mobileSidebarOpen, 
         <div className={`fixed md:relative z-30 w-64 h-full bg-white shadow-lg transform ${mobileSidebarOpen ? 'translate-x-0' : '-translate-x-full'} md:translate-x-0 transition-transform duration-300 ease-in-out`}>
             <div className="p-6 flex justify-between items-center">
                 <h1 className="text-2xl font-bold text-gray-800">Admin Panel</h1>
-                {/* Close button for mobile */}
                 <button
                     className="md:hidden text-gray-500 hover:text-gray-700"
                     onClick={() => setMobileSidebarOpen(false)}
@@ -43,6 +40,12 @@ const AdminSidebar = ({ activeComponent, setActiveComponent, mobileSidebarOpen, 
                     text="Manage Applications"
                     active={activeComponent === 'applications'}
                     onClick={() => handleItemClick('applications')}
+                />
+                <SidebarItem
+                    icon={<FiSettings className="mr-3" size={20} />}
+                    text="Manage Services"
+                    active={activeComponent === 'services'}
+                    onClick={() => handleItemClick('services')}
                 />
             </nav>
         </div>

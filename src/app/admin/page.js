@@ -9,6 +9,7 @@ import AdminOverview from '@/app/admin/components/AdminOverview';
 import ManageUsers from '@/app/admin/components/ManageUsers';
 import ManageApplications from '@/app/admin/components/AdminApplications';
 import Loader from '@/app/components/Loader';
+import ManageServices from './components/ManageServices';
 
 function AdminDashboard() {
     const router = useRouter();
@@ -46,6 +47,8 @@ function AdminDashboard() {
                 return <ManageUsers />;
             case 'applications':
                 return <ManageApplications />;
+            case 'services':
+                return <ManageServices />;
             default:
                 return <AdminOverview setActiveComponent={setActiveComponent} />;
         }
@@ -62,6 +65,7 @@ function AdminDashboard() {
 
     return (
         <div className="flex h-screen w-full bg-gray-100">
+
             {/* Sidebar */}
             <AdminSidebar
                 activeComponent={activeComponent}
