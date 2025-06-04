@@ -94,7 +94,7 @@ export function Navbar() {
             {/* Upper strap */}
             <div className="flex justify-between items-center bg-white py-3 px-4 sm:px-6 border-b border-gray-300 shadow-sm select-none">
                 {/* Left: Social Icons */}
-                <div className="flex space-x-4 sm:space-x-6">
+                <div className="flex space-x-2 sm:space-x-4">
                     <motion.a
                         href="https://facebook.com"
                         target="_blank"
@@ -104,7 +104,7 @@ export function Navbar() {
                         whileHover={iconHover}
                         whileTap={{ scale: 0.9 }}
                     >
-                        <img src="/facebook.png" alt="Facebook" className="w-6 h-6" />
+                        <img src="/facebook.png" alt="Facebook" className="w-8 h-8" />
                     </motion.a>
                     <motion.a
                         href="https://instagram.com"
@@ -115,7 +115,7 @@ export function Navbar() {
                         whileHover={iconHover}
                         whileTap={{ scale: 0.9 }}
                     >
-                        <img src="/instagram.png" alt="Instagram" className="w-6 h-6" />
+                        <img src="/instagram.png" alt="Instagram" className="w-8 h-8" />
                     </motion.a>
                 </div>
 

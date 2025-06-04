@@ -21,12 +21,12 @@ export default function ServiceCard({ coverImage, serviceName }) {
             </div>
 
             {/* Heading */}
-            <h3 className="text-xl font-bold px-2 py-2" style={{ height: "10%" }}>
+            <h3 className="text-2xl font-bold px-2 py-2" style={{ height: "10%" }}>
                 {serviceName}
             </h3>
 
             {/* Button */}
-            <div className="flex items-center px-2" style={{ height: "20%" }}>
+            <div className="flex items-center px-2" style={{ height: "15%" }}>
                 <button
                     className="bg-[#079DB6] text-white font-semibold py-2 px-6 rounded-full
           hover:bg-[#057a8a] transition-colors"

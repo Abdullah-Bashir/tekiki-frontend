@@ -81,14 +81,14 @@ export default function ServiceDetail({ params: paramsPromise }) {
 
                 {/* Image Gallery */}
                 <div className="mb-12">
-                    <div className="grid grid-cols-2 md:grid-cols-4 gap-2">
+                    <div className="grid grid-cols-2 md:grid-cols-4 gap-3">
                         {(showAllMedia ? currentService.media : currentService.media?.slice(0, 4))?.map(
                             (mediaItem, index) => (
                                 <img
                                     key={index}
                                     src={mediaItem.url}
                                     alt={`Service media ${index + 1}`}
-                                    className="w-full h-64 object-cover"
+                                    className="w-full h-80 object-cover"
                                 />
                             )
                         )}

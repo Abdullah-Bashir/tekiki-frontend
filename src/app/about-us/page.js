@@ -12,7 +12,7 @@ export default function About() {
                 {/* Page header */}
                 <div className="text-center">
                     <p className="text-sm mb-2 mt-8">ABOUT US</p>
-                    <h1 className="text-3xl sm:text-4xl font-bold text-black">Tour Operator in Tunisia</h1>
+                    <h1 className="text-3xl md:text-7xl font-semibold text-black">Tour Operator in Tunisia</h1>
                 </div>
 
                 {/* Terms & Conditions section */}

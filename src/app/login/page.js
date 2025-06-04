@@ -66,7 +66,7 @@ export default function Login() {
             <ToastContainer />
 
             <div className="min-h-screen flex items-center justify-center py-12 px-4 sm:px-6 lg:px-8">
-                <div className="max-w-md w-full space-y-8 border p-6 rounded-xl shadow-lg">
+                <div className="max-w-lg w-full space-y-8 border p-6 rounded-xl shadow-lg">
                     {showForgotPassword ? (
                         <>
                             <h2 className="text-center text-2xl font-bold">Reset Password</h2>
@@ -109,9 +109,9 @@ export default function Login() {
                         <>
                             <h2 className="text-center text-2xl font-bold">Sign in to your account</h2>
                             <form onSubmit={handleLogin} className="mt-8 space-y-6">
-                                <div className="space-y-4">
+                                <div className="space-y-8">
                                     <div>
-                                        <label htmlFor="email" className="block text-sm font-medium">
+                                        <label htmlFor="email" className="block text-sm mb-1 font-medium">
                                             Email address
                                         </label>
                                         <input
@@ -126,7 +126,7 @@ export default function Login() {
                                     </div>
 
                                     <div className="relative">
-                                        <label htmlFor="password" className="block text-sm font-medium">
+                                        <label htmlFor="password" className="block text-sm font-medium mb-1">
                                             Password
                                         </label>
                                         <input
