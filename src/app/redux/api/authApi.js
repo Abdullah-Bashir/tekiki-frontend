@@ -6,10 +6,17 @@ export const authApi = createApi({
     reducerPath: 'authApi',
     baseQuery: fetchBaseQuery({
         baseUrl: API_URL,
-        credentials: 'include',
+        prepareHeaders: (headers, { getState }) => {
+            // Get token from localStorage
+            const token = localStorage.getItem('token');
+            if (token) {
+                headers.set('Authorization', `Bearer ${token}`);
+            }
+            return headers;
+        },
     }),
-    endpoints: (builder) => ({
 
+    endpoints: (builder) => ({
         // Signup/Register User
         signupUser: builder.mutation({
             query: (userData) => ({
@@ -26,14 +33,19 @@ export const authApi = createApi({
                 method: 'POST',
                 body: credentials,
             }),
-            transformResponse: (response) => response.user,
+            transformResponse: (response) => {
+                // Store token in localStorage upon successful login
+                if (response.token) {
+                    localStorage.setItem('token', response.token);
+                }
+                return response;
+            },
         }),
 
+        // Validate Token
         validateToken: builder.query({
             query: () => '/validate-token',
-            // Keep the full response
             transformResponse: (response) => response,
-            // Force refetch in certain situations
             refetchOnMountOrArgChange: true,
         }),
 
@@ -41,8 +53,13 @@ export const authApi = createApi({
         logoutUser: builder.mutation({
             query: () => ({
                 url: '/logout',
-                method: 'GET',
+                method: 'POST',
             }),
+            transformResponse: (response) => {
+                // Remove token from localStorage upon logout
+                localStorage.removeItem('token');
+                return response;
+            },
         }),
 
         // Forgot Password
@@ -61,6 +78,13 @@ export const authApi = createApi({
                 method: 'PUT',
                 body: { newPassword, confirmPassword },
             }),
+            transformResponse: (response) => {
+                // Store new token in localStorage after password reset
+                if (response.token) {
+                    localStorage.setItem('token', response.token);
+                }
+                return response;
+            },
         }),
     }),
 });

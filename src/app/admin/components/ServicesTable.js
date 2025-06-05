@@ -128,7 +128,8 @@ const ServicesTable = () => {
                                             className="text-blue-600 hover:text-blue-800 p-1 rounded"
                                             title="Edit"
                                         >
-                                            <FiEdit2 />
+                                            <img className='cursor-pointer' src="/edit.png" alt="" />
+
                                         </button>
                                         <button
                                             onClick={() => handleDelete(service._id)}
@@ -139,7 +140,8 @@ const ServicesTable = () => {
                                             {deletingId === service._id ? (
                                                 <span className="animate-pulse">...</span>
                                             ) : (
-                                                <FiTrash2 />
+                                                <img className='cursor-pointer' src="/delete.png" alt="" />
+
                                             )}
                                         </button>
                                     </div>

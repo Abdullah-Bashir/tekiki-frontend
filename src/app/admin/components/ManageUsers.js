@@ -136,14 +136,14 @@ const ManageUsers = () => {
                                             className="text-blue-600 hover:text-blue-900 p-1 rounded-full hover:bg-blue-50"
                                             title="Edit"
                                         >
-                                            <FiEdit2 size={18} />
+                                            <img className='cursor-pointer' src="/edit.png" alt="" />
                                         </button>
                                         <button
                                             onClick={() => handleDelete(user._id)}
                                             className="text-red-600 hover:text-red-900 p-1 rounded-full hover:bg-red-50"
                                             title="Delete"
                                         >
-                                            <FiTrash2 size={18} />
+                                            <img className='cursor-pointer' src="/delete.png" alt="" />
                                         </button>
                                     </div>
                                 </td>
