@@ -1,22 +1,25 @@
 import { createApi, fetchBaseQuery } from '@reduxjs/toolkit/query/react';
-
 const API_URL = `${process.env.NEXT_PUBLIC_API_URL}/api/auth`;
 
 export const authApi = createApi({
     reducerPath: 'authApi',
+
     baseQuery: fetchBaseQuery({
         baseUrl: API_URL,
         prepareHeaders: (headers, { getState }) => {
+
             // Get token from localStorage
             const token = localStorage.getItem('token');
             if (token) {
                 headers.set('Authorization', `Bearer ${token}`);
             }
+
             return headers;
         },
     }),
 
     endpoints: (builder) => ({
+
         // Signup/Register User
         signupUser: builder.mutation({
             query: (userData) => ({
@@ -86,6 +89,8 @@ export const authApi = createApi({
                 return response;
             },
         }),
+
+
     }),
 });
 

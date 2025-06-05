@@ -13,16 +13,30 @@ const AdminNavbar = ({ toggleSidebar }) => {
     const handleLogout = async () => {
         setLoggingOut(true);
         try {
-            await axios.get(`${process.env.NEXT_PUBLIC_API_URL}/api/auth/logout`, {
-                withCredentials: true,
-            });
+            // Get token from localStorage
+            const token = localStorage.getItem('token');
+
+            // Make logout request with Authorization header
+            await axios.post(
+                `${process.env.NEXT_PUBLIC_API_URL}/api/auth/logout`,
+                {}, // empty body
+                {
+                    headers: {
+                        Authorization: `Bearer ${token}`
+                    }
+                }
+            );
+
+            // Remove token from localStorage
+            localStorage.removeItem('token');
 
             toast.success("Logged out successfully!");
 
-            setTimeout(() => {
-                window.location.href = "/login";
-            }, 1500);
+            // Redirect to login page
+            router.push('/login');
+
         } catch (error) {
+            console.error('Logout error:', error);
             toast.error("Logout failed. Try again.");
         } finally {
             setLoggingOut(false);
@@ -61,7 +75,6 @@ const AdminNavbar = ({ toggleSidebar }) => {
                         </span>
                     )}
                 </button>
-
             </div>
         </div>
     );
