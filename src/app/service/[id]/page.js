@@ -1,43 +1,103 @@
-// src/app/service/[id]/page.js
 "use client";
 
 import { use } from "react";
 import { useState, useEffect } from "react";
 import { useDispatch, useSelector } from "react-redux";
+import { useRouter } from "next/navigation";
 import { Navbar } from "@/app/components/Navbar";
 import { Footer } from "@/app/components/Footer";
 import { MdOutlineFileUpload } from "react-icons/md";
-import DatePicker from "react-datepicker";
-import "react-datepicker/dist/react-datepicker.css";
 import { MdOutlineKeyboardArrowDown, MdOutlineKeyboardArrowUp } from "react-icons/md";
 import Calendar from "@/app/components/calendar";
 import { fetchServiceById } from "@/app/redux/api/serviceSlice";
 import Loader from "@/app/components/Loader";
-
+import { useValidateTokenQuery } from "@/app/redux/api/authApi";
 
 export default function ServiceDetail({ params: paramsPromise }) {
-    const params = use(paramsPromise); // Unwrap the promise using React.use()
-
-    const [searchTerm, setSearchTerm] = useState("");
+    const params = use(paramsPromise);
+    const router = useRouter();
     const [selectedDate, setSelectedDate] = useState(null);
     const [showAllMedia, setShowAllMedia] = useState(false);
     const [isDocsOpen, setIsDocsOpen] = useState(false);
     const [files, setFiles] = useState([]);
+    const [formData, setFormData] = useState({
+        name: '',
+        email: '',
+        cv: null
+    });
 
     const dispatch = useDispatch();
     const { currentService, loading, error } = useSelector((state) => state.service);
+
+    // Validate token and get user data with cache invalidation
+    const {
+        data: authData,
+        isLoading: authLoading,
+        isError: authError,
+        refetch: refetchAuth
+    } = useValidateTokenQuery(undefined, {
+        refetchOnMountOrArgChange: true,
+    });
+
+    const user = authData?.user;
 
     useEffect(() => {
         dispatch(fetchServiceById(params.id));
     }, [dispatch, params.id]);
 
+    useEffect(() => {
+        // Check authentication status and refetch if needed
+        if (authError) {
+            // If token is invalid, clear the form
+            setFormData({
+                name: '',
+                email: '',
+                cv: null
+            });
+            return;
+        }
+
+        // Autofill form if user is logged in
+        if (user) {
+            setFormData({
+                name: user.username || '',
+                email: user.email || '',
+                cv: user.documents?.find(doc => doc.type === 'cv') || null
+            });
+        } else {
+            // Clear form if not logged in
+            setFormData({
+                name: '',
+                email: '',
+                cv: null
+            });
+        }
+    }, [user, authError]);
 
     const handleFileUpload = (e) => {
         const uploadedFiles = Array.from(e.target.files);
         setFiles(uploadedFiles);
+        if (uploadedFiles.length > 0) {
+            setFormData(prev => ({
+                ...prev,
+                cv: {
+                    originalName: uploadedFiles[0].name,
+                    file: uploadedFiles[0]
+                }
+            }));
+        }
     };
 
-    if (loading) {
+    // Redirect to login if not authenticated for protected actions
+    const handleProtectedAction = () => {
+        if (!user) {
+            router.push('/login');
+            return;
+        }
+        // Proceed with the action
+    };
+
+    if (loading || authLoading) {
         return (
             <>
                 <Navbar />
@@ -78,7 +138,6 @@ export default function ServiceDetail({ params: paramsPromise }) {
             <Navbar />
 
             <main className="container mx-auto px-4 py-8">
-
                 {/* Image Gallery */}
                 <div className="mb-12">
                     <div className="grid grid-cols-2 md:grid-cols-4 gap-3">
@@ -105,7 +164,6 @@ export default function ServiceDetail({ params: paramsPromise }) {
                 </div>
 
                 <div className="flex flex-col md:flex-row gap-8">
-
                     {/* Left Section */}
                     <div className="md:w-1/2">
                         <h1 className="text-4xl font-bold mb-6">{currentService.serviceName}</h1>
@@ -137,13 +195,11 @@ export default function ServiceDetail({ params: paramsPromise }) {
                                     ))}
                                 </div>
                             )}
-
                         </div>
                     </div>
 
                     {/* Right Section */}
                     <div className="md:w-1/2 border border-gray-400 rounded-lg p-5">
-
                         <div className="mb-8">
                             <div className="rounded-lg bg-white">
                                 <Calendar
@@ -167,6 +223,9 @@ export default function ServiceDetail({ params: paramsPromise }) {
                                         type="text"
                                         className="w-full p-2 bg-gray-200 rounded-md border-gray-200 focus:border-[#079DB6] focus:ring-2 focus:ring-[#079DB6]/30 transition-all outline-none"
                                         placeholder="Enter your name"
+                                        value={formData.name}
+                                        onChange={(e) => setFormData({ ...formData, name: e.target.value })}
+                                        readOnly={!!user} // Make read-only if user is logged in
                                     />
                                 </div>
 
@@ -174,8 +233,11 @@ export default function ServiceDetail({ params: paramsPromise }) {
                                     <label className="w-1/4">Email</label>
                                     <input
                                         type="email"
-                                        className=" p-2 w-full bg-gray-200 rounded-md border-gray-200 focus:border-[#079DB6] focus:ring-2 focus:ring-[#079DB6]/30 transition-all outline-none"
+                                        className="p-2 w-full bg-gray-200 rounded-md border-gray-200 focus:border-[#079DB6] focus:ring-2 focus:ring-[#079DB6]/30 transition-all outline-none"
                                         placeholder="Enter your email"
+                                        value={formData.email}
+                                        onChange={(e) => setFormData({ ...formData, email: e.target.value })}
+                                        readOnly={!!user} // Make read-only if user is logged in
                                     />
                                 </div>
 
@@ -186,15 +248,23 @@ export default function ServiceDetail({ params: paramsPromise }) {
                                             type="file"
                                             className="hidden"
                                             onChange={handleFileUpload}
+                                            accept=".pdf,.doc,.docx"
                                         />
                                         <div className="text-center p-4">
                                             <MdOutlineFileUpload size={35} className="mx-auto text-2xl mb-2 text-[#079DB6]" />
-                                            <p className="text-gray-500">
-                                                Drag and drop files here, or click to browse
-                                            </p>
+                                            {formData.cv ? (
+                                                <>
+                                                    <p className="text-green-600">Current CV: {formData.cv.originalName}</p>
+                                                    <p className="text-sm text-gray-500 mt-2">Click to upload new CV</p>
+                                                </>
+                                            ) : (
+                                                <p className="text-gray-500">
+                                                    Drag and drop files here, or click to browse
+                                                </p>
+                                            )}
                                             {files.length > 0 && (
                                                 <p className="text-sm text-green-600 mt-2">
-                                                    {files.length} file(s) selected
+                                                    {files.length} new file(s) selected
                                                 </p>
                                             )}
                                         </div>

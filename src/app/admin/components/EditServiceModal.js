@@ -1,6 +1,15 @@
 import React, { useState, useRef } from 'react';
 import { toast } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
+import dynamic from 'next/dynamic';
+
+
+// Dynamically import TextEditor with SSR disabled
+const TextEditor = dynamic(() => import('./TextEditor'), {
+    ssr: false,
+    loading: () => <div className="p-3 bg-gray-100 rounded-md">Loading editor...</div>
+});
+
 
 const EditServiceModal = ({ service, onClose, onSave }) => {
     const [formData, setFormData] = useState({
@@ -28,6 +37,11 @@ const EditServiceModal = ({ service, onClose, onSave }) => {
     const handleChange = (e) => {
         setFormData(prev => ({ ...prev, [e.target.name]: e.target.value }));
     };
+
+    const handleDescriptionChange = (value) => {
+        setFormData(prev => ({ ...prev, description: value }));
+    };
+
 
     const handleCoverImageChange = (e) => {
         const file = e.target.files[0];
@@ -235,13 +249,9 @@ const EditServiceModal = ({ service, onClose, onSave }) => {
 
                             <div>
                                 <label className="block text-sm font-medium text-gray-700 mb-1">Description *</label>
-                                <textarea
-                                    name="description"
-                                    value={formData.description}
-                                    onChange={handleChange}
-                                    rows={4}
-                                    className="w-full p-3 border border-gray-300 rounded-md outline-none focus:ring-[#079DB6] focus:ring-2 focus:border-transparent bg-gray-200"
-                                    required
+                                <TextEditor
+                                    content={formData.description}
+                                    onChange={handleDescriptionChange}
                                 />
                             </div>
 

@@ -5,14 +5,19 @@ import { toast } from 'react-toastify';
 import { FiLogOut } from 'react-icons/fi';
 import { AiOutlineDashboard, AiOutlineMenu } from 'react-icons/ai';
 import { useLogoutUserMutation } from '@/app/redux/api/authApi';
+import { useDispatch } from 'react-redux'; // Import useDispatch
+import { authApi } from '@/app/redux/api/authApi';
 
 const Navbar = ({ toggleSidebar }) => {
     const router = useRouter();
+    const dispatch = useDispatch(); // Initialize dispatch
     const [logoutUser, { isLoading }] = useLogoutUserMutation();
 
     const handleLogout = async () => {
         try {
             await logoutUser().unwrap();
+            localStorage.removeItem('token');
+            dispatch(authApi.util.resetApiState()); // Now dispatch is defined
             toast.success("Logged out successfully!");
             router.push('/login');
         } catch (error) {

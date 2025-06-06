@@ -128,7 +128,7 @@ export function Navbar() {
                     whileHover={{ scale: 1.1, color: "#079DB6" }}
                     onClick={() => router.push("/")}
                 >
-                    Tekiki
+                    Work in Germany
                 </motion.div>
 
                 {/* Right: Auth buttons - Hidden on mobile */}
@@ -215,7 +215,7 @@ export function Navbar() {
                                     setIsOpen(false);
                                 }}
                             >
-                                Tekiki
+                                Work in Germany
                             </motion.div>
                         </motion.div>
 

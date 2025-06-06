@@ -1,25 +1,22 @@
 import { createApi, fetchBaseQuery } from '@reduxjs/toolkit/query/react';
+
 const API_URL = `${process.env.NEXT_PUBLIC_API_URL}/api/auth`;
 
 export const authApi = createApi({
     reducerPath: 'authApi',
-
     baseQuery: fetchBaseQuery({
         baseUrl: API_URL,
-        prepareHeaders: (headers, { getState }) => {
-
-            // Get token from localStorage
+        prepareHeaders: (headers) => {
             const token = localStorage.getItem('token');
             if (token) {
                 headers.set('Authorization', `Bearer ${token}`);
             }
-
             return headers;
         },
     }),
-
+    // Add tag types for cache invalidation
+    tagTypes: ['Auth'],
     endpoints: (builder) => ({
-
         // Signup/Register User
         signupUser: builder.mutation({
             query: (userData) => ({
@@ -27,6 +24,7 @@ export const authApi = createApi({
                 method: 'POST',
                 body: userData,
             }),
+            invalidatesTags: ['Auth'],
         }),
 
         // Login User
@@ -37,18 +35,20 @@ export const authApi = createApi({
                 body: credentials,
             }),
             transformResponse: (response) => {
-                // Store token in localStorage upon successful login
                 if (response.token) {
                     localStorage.setItem('token', response.token);
                 }
                 return response;
             },
+            invalidatesTags: ['Auth'],
         }),
 
         // Validate Token
         validateToken: builder.query({
             query: () => '/validate-token',
             transformResponse: (response) => response,
+            providesTags: ['Auth'],
+            // Force refetch when the query is executed
             refetchOnMountOrArgChange: true,
         }),
 
@@ -59,9 +59,19 @@ export const authApi = createApi({
                 method: 'POST',
             }),
             transformResponse: (response) => {
-                // Remove token from localStorage upon logout
                 localStorage.removeItem('token');
                 return response;
+            },
+            // Clear all auth-related cache
+            invalidatesTags: ['Auth'],
+            // Force all queries to refetch
+            onQueryStarted: async (_, { dispatch, queryFulfilled }) => {
+                try {
+                    await queryFulfilled;
+                    dispatch(authApi.util.resetApiState()); // Reset entire API state
+                } catch (error) {
+                    console.error('Logout error:', error);
+                }
             },
         }),
 
@@ -82,15 +92,13 @@ export const authApi = createApi({
                 body: { newPassword, confirmPassword },
             }),
             transformResponse: (response) => {
-                // Store new token in localStorage after password reset
                 if (response.token) {
                     localStorage.setItem('token', response.token);
                 }
                 return response;
             },
+            invalidatesTags: ['Auth'],
         }),
-
-
     }),
 });
 
