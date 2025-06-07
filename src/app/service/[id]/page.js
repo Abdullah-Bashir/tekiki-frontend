@@ -163,7 +163,7 @@ export default function ServiceDetail({ params: paramsPromise }) {
                         <h1 className="text-4xl font-bold mb-6">{currentService.serviceName}</h1>
                         {/* Render HTML description safely */}
                         <div 
-                            className="text-gray-600 mb-8 prose max-w-none"
+                            className="text-gray-600 mb-7 prose max-w-none"
                             dangerouslySetInnerHTML={{ __html: currentService.description }}
                         />
 
