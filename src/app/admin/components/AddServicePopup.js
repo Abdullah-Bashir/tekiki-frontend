@@ -5,7 +5,7 @@ import { createService, fetchServices } from '@/app/redux/api/serviceSlice';
 import { useDispatch } from 'react-redux';
 import dynamic from 'next/dynamic';
 
-// Dynamically import TextEditor with SSR disabled
+// Dynamically import TextEditor with SSR disable
 const TextEditor = dynamic(() => import('./TextEditor'), {
     ssr: false,
     loading: () => <div className="p-3 bg-gray-100 rounded-md">Loading editor...</div>
