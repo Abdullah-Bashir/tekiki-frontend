@@ -46,9 +46,7 @@ export default function ServiceDetail({ params: paramsPromise }) {
     }, [dispatch, params.id]);
 
     useEffect(() => {
-        // Check authentication status and refetch if needed
         if (authError) {
-            // If token is invalid, clear the form
             setFormData({
                 name: '',
                 email: '',
@@ -57,7 +55,6 @@ export default function ServiceDetail({ params: paramsPromise }) {
             return;
         }
 
-        // Autofill form if user is logged in
         if (user) {
             setFormData({
                 name: user.username || '',
@@ -65,7 +62,6 @@ export default function ServiceDetail({ params: paramsPromise }) {
                 cv: user.documents?.find(doc => doc.type === 'cv') || null
             });
         } else {
-            // Clear form if not logged in
             setFormData({
                 name: '',
                 email: '',
@@ -88,13 +84,11 @@ export default function ServiceDetail({ params: paramsPromise }) {
         }
     };
 
-    // Redirect to login if not authenticated for protected actions
     const handleProtectedAction = () => {
         if (!user) {
             router.push('/login');
             return;
         }
-        // Proceed with the action
     };
 
     if (loading || authLoading) {
@@ -167,7 +161,11 @@ export default function ServiceDetail({ params: paramsPromise }) {
                     {/* Left Section */}
                     <div className="md:w-1/2">
                         <h1 className="text-4xl font-bold mb-6">{currentService.serviceName}</h1>
-                        <p className="text-gray-600 mb-8">{currentService.description}</p>
+                        {/* Render HTML description safely */}
+                        <div 
+                            className="text-gray-600 mb-8 prose max-w-none"
+                            dangerouslySetInnerHTML={{ __html: currentService.description }}
+                        />
 
                         <div>
                             <div
@@ -225,7 +223,7 @@ export default function ServiceDetail({ params: paramsPromise }) {
                                         placeholder="Enter your name"
                                         value={formData.name}
                                         onChange={(e) => setFormData({ ...formData, name: e.target.value })}
-                                        readOnly={!!user} // Make read-only if user is logged in
+                                        readOnly={!!user}
                                     />
                                 </div>
 
@@ -237,7 +235,7 @@ export default function ServiceDetail({ params: paramsPromise }) {
                                         placeholder="Enter your email"
                                         value={formData.email}
                                         onChange={(e) => setFormData({ ...formData, email: e.target.value })}
-                                        readOnly={!!user} // Make read-only if user is logged in
+                                        readOnly={!!user}
                                     />
                                 </div>
 
@@ -271,11 +269,11 @@ export default function ServiceDetail({ params: paramsPromise }) {
                                     </label>
                                 </div>
 
-                                {/* Submit Button */}
                                 <div className="flex justify-center mt-8">
                                     <button
                                         type="submit"
                                         className="bg-[#079DB6] text-white px-10 py-2 rounded-full hover:bg-[#057f91] transition-all shadow-md hover:shadow-lg font-medium"
+                                        onClick={handleProtectedAction}
                                     >
                                         Submit
                                     </button>
