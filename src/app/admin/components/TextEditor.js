@@ -7,7 +7,7 @@ import TextStyle from '@tiptap/extension-text-style';
 import { Color } from '@tiptap/extension-color';
 import TextAlign from '@tiptap/extension-text-align';
 import Link from '@tiptap/extension-link';
-import Highlight from '@tiptap/extension-highlight';
+import Highlight from '@tiptap/extension-highlight'
 import { useEffect } from 'react';
 
 const MenuBar = ({ editor }) => {
@@ -122,6 +122,7 @@ const MenuBar = ({ editor }) => {
     </div>
   );
 };
+
 
 const TextEditor = ({ content, onChange }) => {
   const editor = useEditor({
